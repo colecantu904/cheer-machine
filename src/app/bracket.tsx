@@ -28,7 +28,9 @@ export default function Bracket({ passkey }: BracketProps) {
     async function fetchImages() {
       try {
         const apiUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+          process.env.NODE_ENV === "production"
+            ? "https://cheer-machine.vercel.app"
+            : "http://127.0.0.1:8000";
 
         const response = await fetch(`${apiUrl}/api/decrypt/${passkey}`);
         const data = await response.json();
