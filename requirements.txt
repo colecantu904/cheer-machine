@@ -1,3 +1,5 @@
 numpy
 pillow
 cryptography
+python-dotenv
+fastapi[standard]
