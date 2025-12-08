@@ -27,10 +27,10 @@ export default function Bracket({ passkey }: BracketProps) {
   useEffect(() => {
     async function fetchImages() {
       try {
-        const apiUrl = "https://cheer-machine.vercel.app";
-        //   process.env.NODE_ENV === "production"
-        //     ? "https://cheer-machine.vercel.app"
-        //     : "http://127.0.0.1:8000";
+        const apiUrl =
+          process.env.NODE_ENV === "production"
+            ? "https://cheer-machine.vercel.app"
+            : "http://127.0.0.1:8000";
 
         const response = await fetch(`${apiUrl}/api/decrypt/${passkey}`);
         const data = await response.json();

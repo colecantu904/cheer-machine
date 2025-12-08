@@ -1,5 +1,7 @@
+fastapi[standard]
+uvicorn
 numpy
-pillow
+Pillow
 cryptography
 python-dotenv
-fastapi[standard]
+python-multipart

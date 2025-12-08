@@ -1,6 +1,5 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware # <--- Import this
-
+from fastapi.middleware.cors import CORSMiddleware
 import os
 import numpy as np
 import base64
@@ -11,9 +10,9 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from dotenv import load_dotenv
+# from dotenv import load_dotenv # Dotenv is often not needed in Vercel prod if vars are set in UI, but keep it if you want
 
-# load environment variables from .env file
-load_dotenv()
+load_dotenv() 
 
 app = FastAPI()
 
@@ -84,20 +83,27 @@ def decrypt_image_with_password(input_path, password_text, salt_hex, nonce_hex):
 # Add this block to allow connection from Next.js
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://cheer-machine.vercel.app"], # <--- The URL of your Next.js app
+    allow_origins=["http://localhost:3000", "https://cheer-machine.vercel.app"],
     allow_credentials=True,
-    allow_methods=["*"], # Allow all methods (GET, POST, etc.)
+    allow_methods=["*"], 
     allow_headers=["*"],
 )
+
 @app.get("/api/decrypt/{passkey}")
 def get_decrypt(passkey: str):
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-    input_path = os.path.join(project_root, "public", "encrypted-images")
+    # FIX: Get the directory where THIS script (index.py) lives
+    current_dir = os.path.dirname(__file__)
+    
+    # FIX: Look for images in the same folder (api/encrypted-images)
+    input_path = os.path.join(current_dir, "encrypted-images")
+    
+    # Debug print (logs appear in Vercel dashboard)
+    print(f"Looking for images in: {input_path}")
     
     base64_images = decrypt_image_with_password(
         input_path=input_path,
         password_text=passkey,
-        salt_hex=os.environ.get("SALT"),
+        salt_hex=os.environ.get("SALT"), # Ensure these are set in Vercel Project Settings!
         nonce_hex=os.environ.get("NONCE")
     )
     
