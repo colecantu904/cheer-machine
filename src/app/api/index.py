@@ -84,7 +84,7 @@ def decrypt_image_with_password(input_path, password_text, salt_hex, nonce_hex):
 # Add this block to allow connection from Next.js
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"], # <--- The URL of your Next.js app
+    allow_origins=["http://localhost:3000", "https://cheer-machine.vercel.app"], # <--- The URL of your Next.js app
     allow_credentials=True,
     allow_methods=["*"], # Allow all methods (GET, POST, etc.)
     allow_headers=["*"],
