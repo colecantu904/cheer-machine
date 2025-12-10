@@ -84,7 +84,6 @@ def decrypt_image_with_password(input_path, password_text, salt_hex, nonce_hex):
         img_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
         base64_images.append(f"data:image/png;base64,{img_base64}")
         
-        print(f"--- Decrypted image {i} ---")
     
     return base64_images
 
