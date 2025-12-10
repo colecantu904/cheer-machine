@@ -30,9 +30,17 @@ def derive_key(password: str, salt: bytes) -> bytes:
     return kdf.derive(password.encode())
 
 def get_image_data(image_path):
-    img = Image.open(image_path).convert('RGB')
+    img = Image.open(image_path)
+    # Apply EXIF orientation if present
+    try:
+        from PIL import ImageOps
+        img = ImageOps.exif_transpose(img)
+    except Exception:
+        pass  # No EXIF data or already correctly oriented
+    img = img.convert('RGB')
     pixels = np.array(img)
     return pixels, img.size
+
 def decrypt_image_with_password(input_path, password_text, salt_hex, nonce_hex):
     
     images = []
