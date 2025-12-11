@@ -123,9 +123,22 @@ def get_decrypt(passkey: str):
 
 @app.get("/api/decrypt-message/{passkey}")
 def get_decrypt_message(passkey: str):
-    key = derive_key(passkey, bytes.fromhex(os.environ.get("SALT")))
-    nonce = bytes.fromhex(os.environ.get("NONCE"))
-    ciphertext = bytes.fromhex(os.environ.get("CIPHERTEXT"))
-    decrypted_message = decrypt_message(key, nonce, ciphertext).decode('utf-8')
-    
-    return {"message": decrypted_message}
+    try:
+        key = derive_key(passkey, bytes.fromhex(os.environ.get("SALT")))
+        nonce = bytes.fromhex(os.environ.get("NONCE"))
+        ciphertext = bytes.fromhex(os.environ.get("CIPHERTEXT"))
+        decrypted_bytes = decrypt_message(key, nonce, ciphertext)
+        
+        # Try to decode as UTF-8
+        try:
+            decrypted_message = decrypted_bytes.decode('utf-8')
+        except UnicodeDecodeError:
+            # If decoding fails, the passkey is likely incorrect
+            return {"message": "Maybe try a different passkey?"}
+        
+        print(decrypted_message)
+        
+        return {"message": decrypted_message}
+    except Exception as e:
+        print(f"Decryption error: {e}")
+        return {"message": "Failed to decrypt message", "error": True}
