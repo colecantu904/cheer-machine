@@ -37,7 +37,7 @@ export default function Home() {
               {showForm ? (
                 <div className="h-full w-full max-w-[90vw]">
                   <form
-                    className="h-full flex flex-row gap-1 w-full"
+                    className="h-full flex flex-row gap-1"
                     onSubmit={(e) => {
                       e.preventDefault();
                       // Handle passkey submission logic here)
@@ -70,9 +70,7 @@ export default function Home() {
           </main>
         </>
       ) : (
-        <div className="bracket-container">
-          <Bracket passkey={currentPasskey} />
-        </div>
+        <Bracket passkey={currentPasskey} />
       )}
     </div>
   );
