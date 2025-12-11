@@ -11,8 +11,8 @@ export default function Bracket({ passkey }: BracketProps) {
   const [images, setImages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [winner, setWinner] = useState<string | null>(null);
-  const [image1, setImage1] = useState<string | null>(null);
-  const [image2, setImage2] = useState<string | null>(null);
+  const [image1, setImage1] = useState<string>("");
+  const [image2, setImage2] = useState<string>("");
   const [vote, setVote] = useState<number | null>(null);
 
   // go over every 2 images, display, then add the winner to next round
@@ -22,6 +22,19 @@ export default function Bracket({ passkey }: BracketProps) {
   const currentPairs = useRef<number[]>([]);
   const nextPairs = useRef<number[]>([]);
   const i = useRef<number>(0); // index in images array
+
+  const handleReset = () => {
+    // Reset logic here
+    currentPairs.current = (Array.from(images.keys()) as number[]).sort(
+      () => Math.random() - 0.5
+    );
+    nextPairs.current = [];
+    setImage1(images[currentPairs.current[0]]);
+    setImage2(images[currentPairs.current[1]]);
+    i.current = 0;
+    setVote(null);
+    setWinner(null);
+  };
 
   // Fetch images once on mount
   useEffect(() => {
@@ -38,9 +51,11 @@ export default function Bracket({ passkey }: BracketProps) {
         const path_data = data.images;
 
         setImages(path_data);
-        currentPairs.current = Array.from(path_data.keys());
-        setImage1(path_data[0]);
-        setImage2(path_data[1]);
+        currentPairs.current = (Array.from(path_data.keys()) as number[]).sort(
+          () => Math.random() - 0.5
+        );
+        setImage1(path_data[currentPairs.current[0]]);
+        setImage2(path_data[currentPairs.current[1]]);
       } catch (error) {
         console.error("Failed to fetch images:", error);
       } finally {
@@ -68,9 +83,13 @@ export default function Bracket({ passkey }: BracketProps) {
 
     i.current += 2;
 
+    console.log(currentPairs.current);
+    console.log("Next Pairs:", nextPairs.current);
+    console.log("Index:", i.current);
+
     if (i.current >= currentPairs.current.length) {
       // move to next round
-      currentPairs.current = nextPairs.current;
+      currentPairs.current = nextPairs.current.sort(() => Math.random() - 0.5);
       nextPairs.current = [];
       i.current = 0;
 
@@ -92,35 +111,50 @@ export default function Bracket({ passkey }: BracketProps) {
   }, [vote, images]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="flex gap-3">
+          <div className="w-4 h-4 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+          <div className="w-4 h-4 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+          <div className="w-4 h-4 bg-blue-500 rounded-full animate-bounce"></div>
+        </div>
+      </div>
+    );
   }
 
   return (
     <>
       {!winner ? (
-        <div className="flex flex-col gap-2 w-[95vw] h-[95vh] p-4">
+        <div className="flex flex-col gap-2 w-[95vw] h-[85vh] p-4">
           <button onClick={() => setVote(1)} className="w-full h-1/2">
             <img
               className="rounded-sm w-full h-full object-cover"
-              src={image1!}
+              src={image1}
               alt="Image 1"
             />
           </button>
-          <button onClick={() => setVote(2)} className="w-full h-1/2">
-            <img
-              className="rounded-sm w-full h-full object-cover"
-              src={image2!}
-              alt="Image 2"
-            />
-          </button>
+          {image2 && (
+            <button onClick={() => setVote(2)} className="w-full h-1/2">
+              <img
+                className="rounded-sm w-full h-full object-cover"
+                src={image2}
+                alt="Image 2"
+              />
+            </button>
+          )}
         </div>
       ) : (
-        <div className="aspect-auto">
-          <img
-            className="rounded-sm w-full h-full object-cover"
-            src={winner}
-            alt="Winner"
-          />
+        <div className="flex flex-col items-center gap-8">
+          <div className="w-auto h-auto">
+            <img
+              className="w-full h-full object-contain"
+              src={winner}
+              alt="Winner"
+            />
+          </div>
+          <button onClick={handleReset} className="christmas-button">
+            Try Again?
+          </button>
         </div>
       )}
     </>

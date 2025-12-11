@@ -35,7 +35,7 @@ export default function Home() {
 
             <div className="h-15">
               {showForm ? (
-                <div className="h-full max-w-[90vw]">
+                <div className="h-full w-full max-w-[90vw]">
                   <form
                     className="h-full flex flex-row gap-1 w-full"
                     onSubmit={(e) => {
