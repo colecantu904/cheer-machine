@@ -156,7 +156,7 @@ export default function Bracket({ passkey }: BracketProps) {
       ) : showMessage ? (
         <Note passkey={passkey} />
       ) : (
-        <div className="flex flex-col items-center gap-8">
+        <div className="flex flex-col items-center gap-8 overflow-auto">
           <div className="w-auto h-auto">
             <img
               className="w-full h-full object-contain"
