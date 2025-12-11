@@ -125,15 +125,9 @@ export default function Bracket({ passkey }: BracketProps) {
   return (
     <>
       {!winner ? (
-        <div
-          className="flex flex-col h-full justify-start pt-8"
-          style={{ paddingTop: "24px", alignItems: "flex-end" }}
-        >
-          <div className="flex flex-col items-center gap-2 w-[95vw] h-[85vh] p-8 mt-8">
-            <button
-              onClick={() => setVote(1)}
-              className="w-full h-1/2 max-w-xl"
-            >
+        <div className="flex flex-col h-full items-end">
+          <div className="!pt-8 flex flex-col gap-2 w-[95vw] h-[85vh]">
+            <button onClick={() => setVote(1)} className="w-full h-1/2">
               <img
                 className="rounded-sm w-full h-full object-cover"
                 src={image1}
@@ -141,10 +135,7 @@ export default function Bracket({ passkey }: BracketProps) {
               />
             </button>
             {image2 && (
-              <button
-                onClick={() => setVote(2)}
-                className="w-full h-1/2 max-w-xl"
-              >
+              <button onClick={() => setVote(2)} className="w-full h-1/2">
                 <img
                   className="rounded-sm w-full h-full object-cover"
                   src={image2}
