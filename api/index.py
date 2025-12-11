@@ -29,6 +29,11 @@ def derive_key(password: str, salt: bytes) -> bytes:
     )
     return kdf.derive(password.encode())
 
+def decrypt_message(key: bytes, nonce: bytes, ciphertext: bytes) -> bytes:
+    cipher = Cipher(algorithms.AES(key), modes.CTR(nonce), backend=default_backend())
+    decryptor = cipher.decryptor()
+    return decryptor.update(ciphertext) + decryptor.finalize()
+
 def get_image_data(image_path):
     img = Image.open(image_path)
     # Apply EXIF orientation if present
@@ -115,3 +120,12 @@ def get_decrypt(passkey: str):
     )
     
     return {"images": base64_images}
+
+@app.get("/api/decrypt-message/{passkey}")
+def get_decrypt_message(passkey: str):
+    key = derive_key(passkey, bytes.fromhex(os.environ.get("SALT")))
+    nonce = bytes.fromhex(os.environ.get("NONCE"))
+    ciphertext = bytes.fromhex(os.environ.get("CIPHERTEXT"))
+    decrypted_message = decrypt_message(key, nonce, ciphertext).decode('utf-8')
+    
+    return {"message": decrypted_message}

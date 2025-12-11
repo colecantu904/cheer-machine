@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import Note from "./note";
 
 interface BracketProps {
   passkey: string;
@@ -14,6 +15,7 @@ export default function Bracket({ passkey }: BracketProps) {
   const [image1, setImage1] = useState<string>("");
   const [image2, setImage2] = useState<string>("");
   const [vote, setVote] = useState<number | null>(null);
+  const [showMessage, setShowMessage] = useState<boolean>(false);
 
   // go over every 2 images, display, then add the winner to next round
   // if there is 1 image to vote on, it automatically goes to next round
@@ -126,8 +128,11 @@ export default function Bracket({ passkey }: BracketProps) {
     <>
       {!winner ? (
         <div className="flex flex-col h-full items-end">
-          <div className="!pt-8 flex flex-col gap-2 w-[95vw] h-[85vh]">
-            <button onClick={() => setVote(1)} className="w-full h-1/2">
+          <div className="!pt-8 flex flex-col gap-2 w-[95vw] h-[85vh] items-center">
+            <button
+              onClick={() => setVote(1)}
+              className="w-full h-1/2 max-w-xl"
+            >
               <img
                 className="rounded-sm w-full h-full object-cover"
                 src={image1}
@@ -135,7 +140,10 @@ export default function Bracket({ passkey }: BracketProps) {
               />
             </button>
             {image2 && (
-              <button onClick={() => setVote(2)} className="w-full h-1/2">
+              <button
+                onClick={() => setVote(2)}
+                className="w-full h-1/2 max-w-xl"
+              >
                 <img
                   className="rounded-sm w-full h-full object-cover"
                   src={image2}
@@ -145,6 +153,8 @@ export default function Bracket({ passkey }: BracketProps) {
             )}
           </div>
         </div>
+      ) : showMessage ? (
+        <Note passkey={passkey} />
       ) : (
         <div className="flex flex-col items-center gap-8">
           <div className="w-auto h-auto">
@@ -156,6 +166,12 @@ export default function Bracket({ passkey }: BracketProps) {
           </div>
           <button onClick={handleReset} className="christmas-button">
             Try Again?
+          </button>
+          <button
+            className="christmas-button"
+            onClick={() => setShowMessage(true)}
+          >
+            Message
           </button>
         </div>
       )}
